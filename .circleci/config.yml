@@ -27,12 +27,16 @@ jobs:
       - run: |
           echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
       - run: docker build -t $DOCKERHUB_USERNAME/oc-lettings:$CIRCLE_SHA1 .
-      - run: docker push $DOCKERHUB_USERNAME/oc-lettings:$CIRCLE_SHA1   
+      - run: docker push $DOCKERHUB_USERNAME/oc-lettings:$CIRCLE_SHA1
 
 workflows:
   build-and-test-workflow:
     jobs:
       - test-and-lint
       - build-and-push-to-dockerhub:
+          filters:
+            branches:
+              only:
+                - master
           requires:
             - test-and-lint
