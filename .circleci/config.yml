@@ -16,7 +16,23 @@ jobs:
           name: run tests
           command: python manage.py test
 
+  build-and-push-to-dockerhub:
+    docker:
+      - image: cimg/python:3.10.1
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+      - run: |
+          echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
+      - run: docker build -t $DOCKERHUB_USERNAME/oc-lettings:$CIRCLE_SHA1 .
+      - run: docker push $DOCKERHUB_USERNAME/oc-lettings:$CIRCLE_SHA1   
+
 workflows:
   build-and-test-workflow:
     jobs:
       - test-and-lint
+      - build-and-push-to-dockerhub:
+          requires:
+            - test-and-lint
