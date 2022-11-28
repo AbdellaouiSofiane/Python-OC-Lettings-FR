@@ -1,5 +1,6 @@
 FROM python:3
-WORKDIR /circle_ci_python_example
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
+WORKDIR /app
+COPY requirements.txt /app
+RUN pip3 install -r requirements.txt --no-cache-dir
+COPY . /app
+CMD gunicorn --bind 0.0.0.0:$PORT oc_lettings_site.wsgi
