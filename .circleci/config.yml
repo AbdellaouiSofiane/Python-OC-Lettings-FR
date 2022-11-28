@@ -25,6 +25,17 @@ jobs:
       - run: docker build -t $DOCKERHUB_USERNAME/oc-lettings:$CIRCLE_SHA1 .
       - run: docker push $DOCKERHUB_USERNAME/oc-lettings:$CIRCLE_SHA1
 
+  deploy-to-heroku:
+    machine: true
+    steps:
+      - checkout
+      - run: |
+          sudo curl https://cli-assets.heroku.com/install.sh | sh
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:login
+          HEROKU_API_KEY=${HEROKU_TOKEN} docker tag $DOCKERHUB_USERNAME/oc-lettings:$CIRCLE_SHA1 registry.heroku.com/${HEROKU_APP_NAME}/web
+          HEROKU_API_KEY=${HEROKU_TOKEN} docker push registry.heroku.com/${HEROKU_APP_NAME}/web
+          HEROKU_API_KEY=${HEROKU_TOKEN} heroku container:release web
+
 workflows:
   build-and-test-workflow:
     jobs:
@@ -36,3 +47,6 @@ workflows:
                 - master
           requires:
             - test-and-lint
+      - deploy-to-heroku:
+          requires:
+            - build-and-push-to-dockerhub
