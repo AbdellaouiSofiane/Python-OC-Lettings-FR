@@ -1,5 +1,8 @@
 FROM --platform=linux/amd64 python:3.10.1
 WORKDIR /app
+ENV VIRTUAL_ENV=.env
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 COPY requirements.txt /app
 RUN pip3 install -r requirements.txt --no-cache-dir
 COPY . /app
