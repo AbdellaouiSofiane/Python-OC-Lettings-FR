@@ -75,3 +75,19 @@ Utilisation de PowerShell, comme ci-dessus sauf :
 
 - Pour activer l'environnement virtuel, `.\venv\Scripts\Activate.ps1` 
 - Remplacer `which <my-command>` par `(Get-Command <my-command>).Path`
+
+
+### Déploiement
+
+Le déploiement s'effectue automatiquement sur heroku par *CircleCI* lors de la modification de la branche`master`.
+
+La configuration du pipeline se fait directement sur *CircleCI* avec le lien du repository souhaité.
+
+Pour ce faire les variables d'environnement suivantes sont nécéssaires:
+
+* `DOCKERHUB_PASSWORD`
+* `DOCKERHUB_USERNAME`
+* `HEROKU_API_KEY`
+* `HEROKU_APP_NAME`
+
+La journalisation des erreurs nécéssite d'ajouter la variable `SENTRY_DSN` sur heroku.
